@@ -1,45 +1,354 @@
 "use strict";
 
 document.addEventListener("DOMContentLoaded", () => {
+  const RULE_SECTIONS = [
+    {
+      id: "phonetics",
+      title: "Фанетыка",
+      tagline: "Нагалос, гукі і фанетычныя працэсы",
+      rules: [
+        {
+          id: "ph-1",
+          title: "Яканне ў першым складзе",
+          body:
+            "У ненаціскным першым складзе перад націскам е/я перадаюцца гукам [а] і пішуцца літарамі а/я: зямля, пяро — [п'аро].",
+        },
+        {
+          id: "ph-2",
+          title: "Акання пасля цвёрдых зычных",
+          body:
+            "Галосная о ў ненаціскной пазіцыі пасля цвёрдых зычных пераходзіць у гук [а] і пішацца літарай а: карагод, парог.",
+        },
+        {
+          id: "ph-3",
+          title: "Нескладовае ў",
+          body:
+            "Літара ў абазначае паўгалосны толькі пасля галосных і ў сярэдзіне слова: раўніна, хвайны. У пачатку слова замест яе пішацца в.",
+        },
+        {
+          id: "ph-4",
+          title: "Йотацыйныя галосныя",
+          body:
+            "Літары я, ю, е, ё абазначаюць спалучэнне й + галосная ў пачатку слова, пасля галоснай або пасьля мяккага знака: яма, мая, салёны.",
+        },
+        {
+          id: "ph-5",
+          title: "Гук [г] і [х]",
+          body:
+            "Беларуская мова адрознівае выбухны [г] і фрыкатыўны [ґ]. У запазычаннях часта выкарыстоўваецца [г], але ў фанетычным пісьме часта пераходзіць у [х]: Германія — [х’ерманія].",
+        },
+        {
+          id: "ph-6",
+          title: "Падаўжэнне зычных",
+          body:
+            "На мяжы марфем і пры збегу гукаў зычныя могуць падаўжацца: лес сасновы — [л’эсːаˈсновы], жыццё, вадаспад.",
+        },
+        {
+          id: "ph-7",
+          title: "Спалучэнні дз і дж",
+          body:
+            "Спалучэнні дз і дж абазначаюць адзіны афрыкатны гук і пры пераносе не раздзяляюцца: дз-веры — няправільна, трэба: дзе-веры.",
+        },
+        {
+          id: "ph-8",
+          title: "Асіміляцыя па глухасці",
+          body:
+            "Глухія і звонкія зычныя ўплываюць адзін на аднаго: просьба [проз’ба], лісткі [лісткі], дзе глухі гук пераходзіць у звонкі або наадварот.",
+        },
+        {
+          id: "ph-9",
+          title: "Асіміляцыя па мяккасці",
+          body:
+            "Перад мяккімі зычнымі наступныя гукі таксама становяцца мяккімі: пясчаны [п'ашчаны], дзядзька [дз'адзька].",
+        },
+        {
+          id: "ph-10",
+          title: "Перанос націску",
+          body:
+            "Нагалос у беларускай мове рухомы і можа пераходзіць паміж прыстаўкай і кораням: па́вінен — паві́нны. Варта карыстацца слоўнікам.",
+        },
+      ],
+    },
+    {
+      id: "orthography",
+      title: "Арфаграфія",
+      tagline: "Правапіс, знакі прыпынку і запазычанні",
+      rules: [
+        {
+          id: "or-1",
+          title: "Прыстаўныя галосныя",
+          body:
+            "Перад рэ, л, многа скорашчэнняў дадаецца прыстаўная галосная: агляд, узлесак, успамін. Выбар і/а залежыць ад наступнага гука.",
+        },
+        {
+          id: "or-2",
+          title: "Прыстаўкі з- / с-",
+          body:
+            "Перад звонкімі з ідзе, перад глухімі — с: збегчы, зжыць, але спыніць, скінуць.",
+        },
+        {
+          id: "or-3",
+          title: "Апостраф",
+          body:
+            "Апостраф ставіцца пасля прыставак на зычную перад йотацыйнымі галоснымі: аб'ём, без'іменны, д'ябал.",
+        },
+        {
+          id: "or-4",
+          title: "І і ы пасля ц і ж",
+          body:
+            "Пасля ц, ж, ч пад націскам пішацца і, без націску — ы: ціхі, цыбуля; жывапіс, жыцьцё.",
+        },
+        {
+          id: "or-5",
+          title: "Падвойныя зычныя",
+          body:
+            "Падвойныя пазначаюцца двума літарамі, калі сустракаюцца на стыку марфем або ў корані: вясна — вясновы, панна, інавацыя.",
+        },
+        {
+          id: "or-6",
+          title: "Вялікая літара",
+          body:
+            "З вялікай літарай пішуцца ўласныя назвы, гістарычныя падзеі, унікальныя аб'екты: Мінск, Вялікая Айчынная вайна, Нёман.",
+        },
+        {
+          id: "or-7",
+          title: "Напісанне «не»",
+          body:
+            "Часціца не з прыметнікамі пры адсутнасці супрацьпастаўлення пішацца разам: непрыгожы, непатрэбны; пры супрацьпастаўленні — асобна.",
+        },
+        {
+          id: "or-8",
+          title: "Злучок у складаных словах",
+          body:
+            "Складанаскарочаныя словы і геаграфічныя назвы часта пішуцца праз злучок: навукова-тэхнічны, Беразіно-Гродна.",
+        },
+        {
+          id: "or-9",
+          title: "Іншамоўныя імёны",
+          body:
+            "Імёны іншамоўнага паходжання перадаюцца праз і: Інгмар, Міранда, Хірасіма. Літара й ужываецца толькі ў дыпфтонгах.",
+        },
+        {
+          id: "or-10",
+          title: "Прамая мова",
+          body:
+            "Пры прамой мове перад цытатай ставіцца двукроп'е, сама цытата бярэцца ў двукоссі: Яна сказала: «Будзь уважлівы».",
+        },
+      ],
+    },
+    {
+      id: "morphology",
+      title: "Марфалогія і сінтаксіс",
+      tagline: "Формы слоў і пабудова сказаў",
+      rules: [
+        {
+          id: "mo-1",
+          title: "Назоўнікі на -а/-я",
+          body:
+            "Жаночы род з асновай на мяккую зычную мае канчатак -я: зямля — зямлі. Пасля шыпячых і гартанных пішацца -а: душа, кніга.",
+        },
+        {
+          id: "mo-2",
+          title: "Нескланяльныя назоўнікі",
+          body:
+            "Запазычаныя словы тыпу метро, табу, фіялета не змяняюцца па склонах, але яны маюць род і кіраванне: сучаснае метро, каля метро.",
+        },
+        {
+          id: "mo-3",
+          title: "Лічэбнікі з назоўнікамі",
+          body:
+            "Пасля лічэбнікаў два, тры, чатыры назоўнік стаіць у назоўным множным, пасля пяці і больш — у родным множным: тры словы, пяць слоў.",
+        },
+        {
+          id: "mo-4",
+          title: "Кіраванне пасля «трэба»",
+          body:
+            "Пасля безасабовых слоў трэба, можна, варта дзеяслоў стаіць у неазначальнай форме: трэба вучыцца, можна пачакаць.",
+        },
+        {
+          id: "mo-5",
+          title: "Займеннік «сябе»",
+          body:
+            "Займеннік сябе не мае назоўнага склону і выкарыстоўваецца ў астатніх: бачыў сябе, ганаруся сабой.",
+        },
+        {
+          id: "mo-6",
+          title: "Постфікс -ся",
+          body:
+            "Постфікс -ся пішацца разам з дзеясловам: смяяцца, мыцца. У формах будучага часу ён ставіцца пасля дапаможнага дзеяслова: буду мыцца.",
+        },
+        {
+          id: "mo-7",
+          title: "Дзеепрыметнікі",
+          body:
+            "Дзеепрыметнікі ўтвараюцца ад асновы дзеяслова: чытаючы, зроблены. Яны ўзгадняюцца з назоўнікам у родзе, ліку і склоне.",
+        },
+        {
+          id: "mo-8",
+          title: "Парадак слоў",
+          body:
+            "Нейтральны парадак — тэма перад рэмай: Мы сёння сустракаемся з сябрам. Змена парадку выкарыстоўваецца для падкрэслівання.",
+        },
+        {
+          id: "mo-9",
+          title: "Падвоенае адмоўе",
+          body:
+            "Адмоўныя займеннікі з часціцай ні патрабуюць адмоўя ў дзеяслове: ніхто нічога не сказаў.",
+        },
+        {
+          id: "mo-10",
+          title: "Складаназлучаныя сказы",
+          body:
+            "Часці складаназлучанага сказа злучаюцца злучнікамі і, але, бо і аддзяляюцца коскамі: Сонца зайшло, і пачаўся дождж.",
+        },
+      ],
+    },
+  ];
+  const ACHIEVEMENTS = [
+    {
+      id: "first-test-pass",
+      title: "Першая спроба",
+      icon: "🎯",
+      description: "Пройдзiце першы карыстальніцкі тэст",
+    },
+    {
+      id: "perfect-score",
+      title: "Бездакорна",
+      icon: "🏆",
+      description: "Адкажыце правільна на ўсе пытанні ў тэсце",
+    },
+    {
+      id: "quick-run",
+      title: "Хуткі старт",
+      icon: "⚡",
+      description: "Скончыце тэст менш чым за 30 секунд",
+    },
+    {
+      id: "stat-keeper",
+      title: "Хранiст",
+      icon: "📘",
+      description: "Назапасьце 5 запісаў у статыстыцы",
+    },
+    {
+      id: "marathon-runner",
+      title: "Марафонец",
+      icon: "🥇",
+      description: "Прайдзіце тэст з 8 і больш пытаннямі",
+    },
+    {
+      id: "test-builder",
+      title: "Архітэктар",
+      icon: "📐",
+      description: "Апублікуйце свой першы тэст",
+    },
+    {
+      id: "test-architect",
+      title: "Куратар віктарын",
+      icon: "📚",
+      description: "Стварыце тэст з мінімум 5 пытаннямі",
+    },
+    {
+      id: "test-mentor",
+      title: "Настаўнік",
+      icon: "🧠",
+      description: "Апублікуйце 3 тэсты",
+    },
+    {
+      id: "rule-author",
+      title: "Аўтар правілаў",
+      icon: "✍️",
+      description: "Дадайце першае ўласнае правіла",
+    },
+    {
+      id: "rule-collector",
+      title: "Зборшчык",
+      icon: "🗂️",
+      description: "Дадайце 5 уласных правілаў",
+    },
+    {
+      id: "category-creator",
+      title: "Новы раздзел",
+      icon: "🧩",
+      description: "Стварыце сваю катэгорыю правілаў",
+    },
+    {
+      id: "category-curator",
+      title: "Куратар",
+      icon: "🧭",
+      description: "Стварыце 3 уласныя катэгорыі",
+    },
+    {
+      id: "polyglot",
+      title: "Даследчык мовы",
+      icon: "🌍",
+      description: "Наведайце ўсе базавыя раздзелы правілаў",
+    },
+    {
+      id: "night-owl",
+      title: "Начніца",
+      icon: "🌙",
+      description: "Уключыце начную тэму",
+    },
+    {
+      id: "draft-master",
+      title: "Майстар спісаў",
+      icon: "📝",
+      description: "Дадайце 10 пытанняў у чарнавік",
+    },
+  ];
   const storageKeys = {
     tests: "bel-mini-tests",
     stats: "bel-mini-stats",
     rules: "bel-mini-rules",
+    ruleSections: "bel-mini-rule-sections",
+    achievements: "bel-mini-achievements",
+    metrics: "bel-mini-metrics",
   };
   const THEME_KEY = "bel-mini-theme";
   const telegram = window.Telegram?.WebApp ?? null;
 
-  const BASE_RULES = [
-    {
-      id: "rule-1",
-      title: "Мяккасць і цвёрдасць зычных",
-      body:
-        "У беларускай мове мяккасць больш паслядоўная: перад е, ё, ю, я, і ўсе зычныя становяцца мяккімі, акрамя ж, ч, ш, р.",
-    },
-    {
-      id: "rule-2",
-      title: "Літара «ў»",
-      body:
-        "Нескладовае ў пішацца пасля галоснай і не можа стаяць у пачатку слова. Напрыклад, «маўчанне», «йўнуць».",
-    },
-    {
-      id: "rule-3",
-      title: "Гукавое спалучэнне «дз» і «дж»",
-      body:
-        "Спалучэнні «дз» і «дж» лічацца адным гукам і пры пераносе не раздзяляюцца: «дзе-ці», але «пад-жыць».",
-    },
-    {
-      id: "rule-4",
-      title: "Акання і яканне",
-      body:
-        "У ненаціскным становішчы літары «о» і «е» перадаюць гук «а»: «гарадок» вымаўляецца як «гарадок».",
-    },
-  ];
+  const userSectionsFromStorage = load(storageKeys.ruleSections, []);
+  const normalizedUserSections = Array.isArray(userSectionsFromStorage)
+    ? userSectionsFromStorage.map((section) => ({
+        ...section,
+        id: section?.id || generateSectionId(section?.title || "custom"),
+        title: section?.title || "Катэгорыя",
+        tagline: section?.tagline || "Пользовательская катэгорыя",
+        rules: Array.isArray(section?.rules) ? section.rules : [],
+        isCustom: true,
+      }))
+    : [];
+  const bootSections = [...RULE_SECTIONS, ...normalizedUserSections];
+  const initialCustomRules = load(storageKeys.rules, [])
+    .map((rule) => normalizeCustomRule(rule, bootSections))
+    .filter(Boolean);
+  const defaultRuleCategory =
+    RULE_SECTIONS[0]?.id ||
+    normalizedUserSections[0]?.id ||
+    "phonetics";
+  const defaultMetrics = {
+    visitedSections: [],
+    draftQuestionsAdded: 0,
+    darkModeUsed: false,
+  };
+  const storedAchievements = load(storageKeys.achievements, []);
+  const storedMetrics = load(storageKeys.metrics, defaultMetrics);
+  const metrics = {
+    visitedSections: Array.isArray(storedMetrics?.visitedSections)
+      ? storedMetrics.visitedSections
+      : [],
+    draftQuestionsAdded:
+      typeof storedMetrics?.draftQuestionsAdded === "number"
+        ? storedMetrics.draftQuestionsAdded
+        : 0,
+    darkModeUsed: Boolean(storedMetrics?.darkModeUsed),
+  };
 
   const state = {
     tests: load(storageKeys.tests, []),
     stats: load(storageKeys.stats, []),
-    customRules: load(storageKeys.rules, []),
+    customRules: initialCustomRules,
+    userSections: normalizedUserSections,
     draft: {
       questions: [],
       updated: null,
@@ -48,7 +357,16 @@ document.addEventListener("DOMContentLoaded", () => {
     theme: loadTheme(),
     telegramUser: telegram?.initDataUnsafe?.user ?? null,
     isTelegram: Boolean(telegram),
+    ruleCategory: defaultRuleCategory,
+    achievementsUnlocked: Array.isArray(storedAchievements)
+      ? storedAchievements
+      : [],
+    metrics,
   };
+  save(storageKeys.rules, state.customRules);
+  save(storageKeys.ruleSections, state.userSections);
+  save(storageKeys.achievements, state.achievementsUnlocked);
+  save(storageKeys.metrics, state.metrics);
 
   const dom = {
     tabs: document.querySelectorAll(".tab-link"),
@@ -57,6 +375,11 @@ document.addEventListener("DOMContentLoaded", () => {
     ruleForm: document.getElementById("ruleForm"),
     ruleTitle: document.getElementById("ruleTitle"),
     ruleBody: document.getElementById("ruleBody"),
+    ruleTabs: document.getElementById("ruleTabs"),
+    rulesSubtitle: document.getElementById("rulesSubtitle"),
+    ruleCategorySelect: document.getElementById("ruleCategorySelect"),
+    ruleCategoryNew: document.getElementById("ruleCategoryNew"),
+    createCategoryBtn: document.getElementById("createCategoryBtn"),
     questionForm: document.getElementById("questionForm"),
     testMetaForm: document.getElementById("testMetaForm"),
     authorNick: document.getElementById("authorNick"),
@@ -72,6 +395,7 @@ document.addEventListener("DOMContentLoaded", () => {
     testsList: document.getElementById("testsList"),
     testPlayer: document.getElementById("testPlayer"),
     statsList: document.getElementById("statsList"),
+    achievementsList: document.getElementById("achievementsList"),
     toast: document.getElementById("toast"),
     themeToggle: document.getElementById("themeToggle"),
   };
@@ -80,6 +404,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function init() {
     initTelegramBridge();
+    populateRuleCategorySelect();
+    renderRuleTabs();
+    recordSectionVisit(state.ruleCategory);
     applyTheme(state.theme);
     setupTabs();
     bindForms();
@@ -87,6 +414,7 @@ document.addEventListener("DOMContentLoaded", () => {
     renderDraft();
     renderTests();
     renderStats();
+    renderAchievements();
   }
 
   function load(key, fallback) {
@@ -118,6 +446,26 @@ document.addEventListener("DOMContentLoaded", () => {
     dom.ruleForm.addEventListener("submit", handleRuleSubmit);
     dom.questionForm.addEventListener("submit", handleQuestionSubmit);
     dom.saveTestBtn.addEventListener("click", publishTest);
+    dom.createCategoryBtn?.addEventListener("click", () => {
+      const rawName = dom.ruleCategoryNew?.value?.trim();
+      if (!rawName) {
+        toast("Введите название категории");
+        return;
+      }
+      const sectionId = createCustomCategory(rawName);
+      if (sectionId) {
+        if (dom.ruleCategoryNew) dom.ruleCategoryNew.value = "";
+        setRuleCategory(sectionId);
+      }
+    });
+    dom.ruleTabs?.addEventListener("click", (event) => {
+      const btn = event.target.closest("[data-rule-section]");
+      if (!btn) return;
+      setRuleCategory(btn.dataset.ruleSection);
+    });
+    dom.ruleCategorySelect?.addEventListener("change", (event) => {
+      setRuleCategory(event.target.value);
+    });
 
     dom.draftQuestions.addEventListener("click", (event) => {
       const btn = event.target.closest("[data-remove-question]");
@@ -161,8 +509,26 @@ document.addEventListener("DOMContentLoaded", () => {
     event.preventDefault();
     const title = dom.ruleTitle.value.trim();
     const body = dom.ruleBody.value.trim();
+    let category =
+      dom.ruleCategorySelect?.value ||
+      state.ruleCategory ||
+      defaultRuleCategory;
+    const newCategoryName = dom.ruleCategoryNew?.value
+      ? dom.ruleCategoryNew.value.trim()
+      : "";
+    if (newCategoryName) {
+      const createdId = createCustomCategory(newCategoryName);
+      if (createdId) {
+        category = createdId;
+      }
+      if (dom.ruleCategoryNew) dom.ruleCategoryNew.value = "";
+    }
     if (!title || !body) {
       toast("Заполните оба поля");
+      return;
+    }
+    if (!hasRuleSection(category)) {
+      toast("Выберите категорию");
       return;
     }
 
@@ -172,18 +538,42 @@ document.addEventListener("DOMContentLoaded", () => {
       body,
       createdAt: Date.now(),
       isCustom: true,
+      category,
     });
     save(storageKeys.rules, state.customRules);
     dom.ruleForm.reset();
+    if (dom.ruleCategorySelect) {
+      dom.ruleCategorySelect.value = category;
+    }
+    dom.ruleTitle?.focus();
+    setRuleCategory(category);
     renderRules();
+    unlockAchievement("rule-author");
+    if (state.customRules.length >= 5) {
+      unlockAchievement("rule-collector");
+    }
     toast("Правило добавлено");
   }
 
   function renderRules() {
-    const items = [...BASE_RULES, ...state.customRules];
+    const section = getRuleSection(state.ruleCategory) ?? RULE_SECTIONS[0];
+    if (!section) {
+      dom.rulesList.innerHTML =
+        '<p class="card muted">Правила недаступны. Перазагрузіце старонку.</p>';
+      return;
+    }
+    if (dom.rulesSubtitle) {
+      dom.rulesSubtitle.textContent =
+        section.tagline || "Сістэматызаваныя правілы";
+    }
+    const custom = state.customRules.filter(
+      (rule) => rule.category === section.id
+    );
+    const baseRules = Array.isArray(section.rules) ? section.rules : [];
+    const items = [...baseRules, ...custom];
     if (!items.length) {
       dom.rulesList.innerHTML =
-        '<p class="card muted">Пока правил нет. Добавьте своё!</p>';
+        '<p class="card muted">Пакуль правілаў няма. Дадайце сваё!</p>';
       return;
     }
 
@@ -226,6 +616,7 @@ document.addEventListener("DOMContentLoaded", () => {
       correctIndex,
     });
     state.draft.updated = Date.now();
+    incrementDraftQuestionMetric();
 
     dom.questionForm.reset();
     renderDraft();
@@ -298,6 +689,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
     state.tests.unshift(test);
     save(storageKeys.tests, state.tests);
+    unlockAchievement("test-builder");
+    if (test.questions.length >= 5) {
+      unlockAchievement("test-architect");
+    }
+    if (state.tests.length >= 3) {
+      unlockAchievement("test-mentor");
+    }
 
     state.draft.questions = [];
     state.draft.updated = null;
@@ -481,6 +879,21 @@ document.addEventListener("DOMContentLoaded", () => {
 
     state.stats.unshift(record);
     save(storageKeys.stats, state.stats);
+    if (state.stats.length === 1) {
+      unlockAchievement("first-test-pass");
+    }
+    if (percent === 100) {
+      unlockAchievement("perfect-score");
+    }
+    if (session.durationMs <= 30000) {
+      unlockAchievement("quick-run");
+    }
+    if (state.stats.length >= 5) {
+      unlockAchievement("stat-keeper");
+    }
+    if (record.total >= 8) {
+      unlockAchievement("marathon-runner");
+    }
     renderStats();
     renderTestPlayer();
     toast("Статистика обновлена");
@@ -525,6 +938,11 @@ document.addEventListener("DOMContentLoaded", () => {
   function toggleTheme() {
     const nextTheme = state.theme === "light" ? "dark" : "light";
     applyTheme(nextTheme);
+    if (nextTheme === "dark" && !state.metrics.darkModeUsed) {
+      state.metrics.darkModeUsed = true;
+      saveMetrics();
+      unlockAchievement("night-owl");
+    }
     if (telegram?.HapticFeedback) {
       telegram.HapticFeedback.impactOccurred("medium");
     }
@@ -578,6 +996,196 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  function populateRuleCategorySelect() {
+    if (!dom.ruleCategorySelect) return;
+    dom.ruleCategorySelect.innerHTML = getAllSections()
+      .map(
+        (section) => `<option value="${section.id}">${section.title}</option>`
+      )
+      .join("");
+    dom.ruleCategorySelect.value = state.ruleCategory;
+  }
+
+  function renderRuleTabs() {
+    if (!dom.ruleTabs) return;
+    const sections = getAllSections();
+    dom.ruleTabs.innerHTML = sections.map((section) => {
+      const isActive = section.id === state.ruleCategory;
+      const total = getRuleCountForSection(section.id);
+      return `
+        <button
+          type="button"
+          class="rule-tab-btn"
+          data-rule-section="${section.id}"
+          aria-pressed="${isActive}"
+        >
+          ${section.title} · ${total}
+        </button>
+      `;
+    }).join("");
+  }
+
+  function renderAchievements() {
+    if (!dom.achievementsList) return;
+    dom.achievementsList.innerHTML = ACHIEVEMENTS.map((achievement) => {
+      const unlocked = state.achievementsUnlocked.includes(achievement.id);
+      return `
+        <article class="achievement-card ${
+          unlocked ? "unlocked" : ""
+        }" data-achievement="${achievement.id}">
+          <div class="achievement-icon">${achievement.icon}</div>
+          <div class="achievement-meta">
+            <h4>${achievement.title}</h4>
+            <p>${achievement.description}</p>
+          </div>
+        </article>
+      `;
+    }).join("");
+  }
+
+  function unlockAchievement(id) {
+    if (!id || state.achievementsUnlocked.includes(id)) return;
+    state.achievementsUnlocked.push(id);
+    saveAchievements();
+    renderAchievements();
+    const achievement = ACHIEVEMENTS.find((item) => item.id === id);
+    if (achievement) {
+      toast(`Достижение: ${achievement.title}`);
+    }
+  }
+
+  function createCustomCategory(rawTitle) {
+    const title = rawTitle?.trim();
+    if (!title) return null;
+    const existing = getAllSections().find(
+      (section) => section.title.toLowerCase() === title.toLowerCase()
+    );
+    if (existing) {
+      toast("Категория уже существует");
+      return existing.id;
+    }
+    const id = generateSectionId(title);
+    const newSection = {
+      id,
+      title,
+      tagline: "Пользовательская катэгорыя",
+      rules: [],
+      isCustom: true,
+    };
+    state.userSections.push(newSection);
+    saveUserSections();
+    populateRuleCategorySelect();
+    renderRuleTabs();
+    unlockAchievement("category-creator");
+    if (state.userSections.length >= 3) {
+      unlockAchievement("category-curator");
+    }
+    toast(`Категория «${title}» создана`);
+    return id;
+  }
+
+  function recordSectionVisit(sectionId) {
+    if (!sectionId) return;
+    if (!state.metrics.visitedSections.includes(sectionId)) {
+      state.metrics.visitedSections.push(sectionId);
+      saveMetrics();
+    }
+    const baseIds = RULE_SECTIONS.map((section) => section.id);
+    if (baseIds.every((id) => state.metrics.visitedSections.includes(id))) {
+      unlockAchievement("polyglot");
+    }
+  }
+
+  function incrementDraftQuestionMetric() {
+    state.metrics.draftQuestionsAdded += 1;
+    saveMetrics();
+    if (state.metrics.draftQuestionsAdded >= 10) {
+      unlockAchievement("draft-master");
+    }
+  }
+
+  function getAllSections() {
+    return [...RULE_SECTIONS, ...state.userSections];
+  }
+
+  function getRuleCountForSection(sectionId) {
+    const section = getRuleSection(sectionId);
+    const baseCount = Array.isArray(section?.rules) ? section.rules.length : 0;
+    return baseCount + countCustomRulesInSection(sectionId);
+  }
+
+  function countCustomRulesInSection(sectionId) {
+    return state.customRules.filter((rule) => rule.category === sectionId)
+      .length;
+  }
+
+  function saveUserSections() {
+    save(storageKeys.ruleSections, state.userSections);
+  }
+
+  function saveAchievements() {
+    save(storageKeys.achievements, state.achievementsUnlocked);
+  }
+
+  function saveMetrics() {
+    save(storageKeys.metrics, state.metrics);
+  }
+
+  function generateSectionId(title) {
+    const base = slugify(title || "category");
+    let candidate = `cat-${base}`;
+    let suffix = 1;
+    while (hasRuleSection(candidate)) {
+      candidate = `cat-${base}-${suffix}`;
+      suffix += 1;
+    }
+    return candidate;
+  }
+
+  function setRuleCategory(categoryId) {
+    const next = hasRuleSection(categoryId) ? categoryId : defaultRuleCategory;
+    if (!next) return;
+    if (dom.ruleCategorySelect) {
+      dom.ruleCategorySelect.value = next;
+    }
+    if (state.ruleCategory === next) {
+      renderRules();
+      recordSectionVisit(next);
+      return;
+    }
+    state.ruleCategory = next;
+    renderRuleTabs();
+    renderRules();
+    recordSectionVisit(next);
+  }
+
+  function hasRuleSection(sectionId) {
+    return getAllSections().some((section) => section.id === sectionId);
+  }
+
+  function getRuleSection(sectionId) {
+    return getAllSections().find((section) => section.id === sectionId);
+  }
+
+  function normalizeCustomRule(rule, sectionPool) {
+    if (!rule) return null;
+    const availableSections = Array.isArray(sectionPool)
+      ? sectionPool
+      : getAllSections();
+    const fallback =
+      availableSections[0]?.id || RULE_SECTIONS[0]?.id || defaultRuleCategory;
+    const category = availableSections.some(
+      (section) => section.id === rule.category
+    )
+      ? rule.category
+      : fallback;
+    return {
+      ...rule,
+      category,
+      isCustom: true,
+    };
+  }
+
   function shuffle(list) {
     const copy = [...list];
     for (let i = copy.length - 1; i > 0; i -= 1) {
@@ -608,6 +1216,17 @@ document.addEventListener("DOMContentLoaded", () => {
     const m = Math.floor(seconds / 60);
     const s = seconds % 60;
     return m > 0 ? `${m} мин ${s} с` : `${s} с`;
+  }
+
+  function slugify(value) {
+    return (
+      value
+        .toString()
+        .trim()
+        .toLowerCase()
+        .replace(/[^a-z0-9а-яё]+/giu, "-")
+        .replace(/^-+|-+$/g, "") || "section"
+    );
   }
 
   function escapeHtml(value) {

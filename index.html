@@ -35,15 +35,17 @@
         <button class="tab-link" data-tab="create">Создание теста</button>
         <button class="tab-link" data-tab="user-tests">Пользовательские тесты</button>
         <button class="tab-link" data-tab="stats">Статистика</button>
+        <button class="tab-link" data-tab="achievements">Достижения</button>
       </nav>
 
       <section class="tab-panel active" id="rules" role="tabpanel">
         <header class="panel-header">
           <div>
             <h2>Основные правила</h2>
-            <p>Систематизированная справка + пользовательские дополнения</p>
+            <p id="rulesSubtitle">Систематизированная справка + пользовательские дополнения</p>
           </div>
         </header>
+        <div class="rule-tabs" id="ruleTabs" role="tablist"></div>
         <div id="rulesList" class="card-grid"></div>
 
         <form id="ruleForm" class="card form-card">
@@ -55,6 +57,24 @@
           <label class="form-field">
             <span>Описание</span>
             <textarea id="ruleBody" rows="4" required></textarea>
+          </label>
+          <label class="form-field">
+            <span>Категория</span>
+            <select id="ruleCategorySelect"></select>
+          </label>
+          <label class="form-field">
+            <span>Категория</span>
+            <select id="ruleCategorySelect"></select>
+          </label>
+          <label class="form-field">
+            <span>Своя категория</span>
+            <div class="input-row">
+              <input type="text" id="ruleCategoryNew" placeholder="Например, Дыялекты" />
+              <button type="button" class="secondary-btn" id="createCategoryBtn">
+                Создать
+              </button>
+            </div>
+            <p class="field-hint">Укажите название и нажмите «Создать», чтобы добавить вкладку</p>
           </label>
           <button type="submit" class="primary-btn">Сохранить правило</button>
         </form>
@@ -140,6 +160,16 @@
           </div>
         </header>
         <div id="statsList" class="stats-list"></div>
+      </section>
+
+      <section class="tab-panel" id="achievements" role="tabpanel">
+        <header class="panel-header">
+          <div>
+            <h2>Достижения</h2>
+            <p>Открывайте значки, выполняя действия в приложении</p>
+          </div>
+        </header>
+        <div id="achievementsList" class="achievements-list"></div>
       </section>
     </main>
 
