@@ -12,6 +12,90 @@
     <script defer src="app.js"></script>
   </head>
   <body data-theme="light">
+    <!-- Секция аутентификации -->
+    <section class="auth-section" id="authSection">
+      <div class="auth-card">
+        <h2>Вход в систему</h2>
+        
+        <div class="auth-tabs">
+          <button class="auth-tab active" data-auth-tab="login">Вход</button>
+          <button class="auth-tab" data-auth-tab="register">Регистрация</button>
+        </div>
+
+        <form id="loginForm" class="auth-form active">
+          <label class="form-field">
+            <span>Имя пользователя</span>
+            <input type="text" id="loginUsername" required>
+          </label>
+          <label class="form-field">
+            <span>Пароль</span>
+            <input type="password" id="loginPassword" required>
+          </label>
+          <button type="submit" class="primary-btn">Войти</button>
+        </form>
+
+        <form id="registerForm" class="auth-form">
+          <label class="form-field">
+            <span>Роль</span>
+            <select id="registerRole" required>
+              <option value="">Выберите роль</option>
+              <option value="student">Ученик</option>
+              <option value="teacher">Учитель</option>
+            </select>
+          </label>
+          
+          <div id="studentFields" style="display: none;">
+            <label class="form-field">
+              <span>Имя</span>
+              <input type="text" id="studentFirstName" required>
+            </label>
+            <label class="form-field">
+              <span>Фамилия</span>
+              <input type="text" id="studentLastName" required>
+            </label>
+            <label class="form-field">
+              <span>Номер группы</span>
+              <input type="text" id="studentGroup" required>
+            </label>
+          </div>
+
+          <div id="teacherFields" style="display: none;">
+            <label class="form-field">
+              <span>Имя пользователя</span>
+              <input type="text" id="teacherUsername" required>
+            </label>
+            <label class="form-field">
+              <span>Пароль</span>
+              <input type="password" id="teacherPassword" required>
+            </label>
+          </div>
+
+          <button type="submit" class="primary-btn">Зарегистрироваться</button>
+        </form>
+
+        <div class="admin-access">
+          <button type="button" class="ghost-btn" id="adminLoginBtn">
+            Вход для администратора
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Модальное окно для администратора -->
+    <div id="adminLoginModal" class="modal hidden">
+      <div class="modal-content">
+        <h3>Вход администратора</h3>
+        <label class="form-field">
+          <span>Секретный ключ</span>
+          <input type="password" id="adminKey" required>
+        </label>
+        <div class="modal-actions">
+          <button type="button" class="secondary-btn" data-close-modal>Отмена</button>
+          <button type="button" class="primary-btn" id="confirmAdminLogin">Войти</button>
+        </div>
+      </div>
+    </div>
+
     <header class="app-header">
       <div>
         <p class="app-eyebrow">Telegram Mini App</p>
@@ -25,11 +109,14 @@
         <button id="themeToggle" class="ghost-btn" type="button" aria-pressed="false">
           Ночная тэма
         </button>
+        <button id="logoutBtn" class="ghost-btn" style="display: none;">
+          Выйти
+        </button>
       </div>
     </header>
     <div class="ornament-band" aria-hidden="true"></div>
 
-    <main class="app-shell">
+    <main class="app-shell" style="display: none;">
       <nav class="tab-bar" aria-label="Разделы приложения">
         <button class="tab-link active" data-tab="rules">Основные правила</button>
         <button class="tab-link" data-tab="create">Создание теста</button>
@@ -57,10 +144,6 @@
           <label class="form-field">
             <span>Описание</span>
             <textarea id="ruleBody" rows="4" required></textarea>
-          </label>
-          <label class="form-field">
-            <span>Категория</span>
-            <select id="ruleCategorySelect"></select>
           </label>
           <label class="form-field">
             <span>Категория</span>
@@ -176,4 +259,3 @@
     <div id="toast" role="status" aria-live="polite"></div>
   </body>
 </html>
-

@@ -35,13 +35,13 @@ document.addEventListener("DOMContentLoaded", () => {
           id: "ph-5",
           title: "Гук [г] і [х]",
           body:
-            "Беларуская мова адрознівае выбухны [г] і фрыкатыўны [ґ]. У запазычаннях часта выкарыстоўваецца [г], але ў фанетычным пісьме часта пераходзіць у [х]: Германія — [х’ерманія].",
+            "Беларуская мова адрознівае выбухны [г] і фрыкатыўны [ґ]. У запазычаннях часта выкарыстоўваецца [г], але ў фанетычным пісьме часта пераходзіць у [х]: Германія — [х'ерманія].",
         },
         {
           id: "ph-6",
           title: "Падаўжэнне зычных",
           body:
-            "На мяжы марфем і пры збегу гукаў зычныя могуць падаўжацца: лес сасновы — [л’эсːаˈсновы], жыццё, вадаспад.",
+            "На мяжы марфем і пры збегу гукаў зычныя могуць падаўжацца: лес сасновы — [л'эсːаˈсновы], жыццё, вадаспад.",
         },
         {
           id: "ph-7",
@@ -53,7 +53,7 @@ document.addEventListener("DOMContentLoaded", () => {
           id: "ph-8",
           title: "Асіміляцыя па глухасці",
           body:
-            "Глухія і звонкія зычныя ўплываюць адзін на аднаго: просьба [проз’ба], лісткі [лісткі], дзе глухі гук пераходзіць у звонкі або наадварот.",
+            "Глухія і звонкія зычныя ўплываюць адзін на аднаго: просьба [проз'ба], лісткі [лісткі], дзе глухі гук пераходзіць у звонкі або наадварот.",
         },
         {
           id: "ph-9",
@@ -163,7 +163,7 @@ document.addEventListener("DOMContentLoaded", () => {
           id: "mo-4",
           title: "Кіраванне пасля «трэба»",
           body:
-            "Пасля безасабовых слоў трэба, можна, варта дзеяслоў стаіць у неазначальнай форме: трэба вучыцца, можна пачакаць.",
+            "Пасля безасабовых слоў трэба, можна, варта дзеяслоў стаіць у неазначальнай форме: трэба вучыцся, можна пачакаць.",
         },
         {
           id: "mo-5",
@@ -175,7 +175,7 @@ document.addEventListener("DOMContentLoaded", () => {
           id: "mo-6",
           title: "Постфікс -ся",
           body:
-            "Постфікс -ся пішацца разам з дзеясловам: смяяцца, мыцца. У формах будучага часу ён ставіцца пасля дапаможнага дзеяслова: буду мыцца.",
+            "Постфікс -ся пішацца разам з дзеясловам: смяяцца, мыцца. У формах будучага часы ён ставіцца пасля дапаможнага дзеяслова: буду мыцца.",
         },
         {
           id: "mo-7",
@@ -303,8 +303,11 @@ document.addEventListener("DOMContentLoaded", () => {
     ruleSections: "bel-mini-rule-sections",
     achievements: "bel-mini-achievements",
     metrics: "bel-mini-metrics",
+    users: "bel-mini-users",
+    auth: "bel-mini-auth"
   };
   const THEME_KEY = "bel-mini-theme";
+  const ADMIN_KEY = "belarus_admin_2024"; // Секретный ключ администратора
   const telegram = window.Telegram?.WebApp ?? null;
 
   const userSectionsFromStorage = load(storageKeys.ruleSections, []);
@@ -362,6 +365,9 @@ document.addEventListener("DOMContentLoaded", () => {
       ? storedAchievements
       : [],
     metrics,
+    currentUser: null,
+    users: load(storageKeys.users, []),
+    isAuthenticated: false,
   };
   save(storageKeys.rules, state.customRules);
   save(storageKeys.ruleSections, state.userSections);
@@ -398,25 +404,353 @@ document.addEventListener("DOMContentLoaded", () => {
     achievementsList: document.getElementById("achievementsList"),
     toast: document.getElementById("toast"),
     themeToggle: document.getElementById("themeToggle"),
+    logoutBtn: document.getElementById("logoutBtn"),
   };
 
   init();
 
   function init() {
-    initTelegramBridge();
-    populateRuleCategorySelect();
-    renderRuleTabs();
-    recordSectionVisit(state.ruleCategory);
-    applyTheme(state.theme);
-    setupTabs();
-    bindForms();
-    renderRules();
-    renderDraft();
-    renderTests();
-    renderStats();
-    renderAchievements();
+    initAuth();
+    
+    if (state.isAuthenticated) {
+      initTelegramBridge();
+      populateRuleCategorySelect();
+      renderRuleTabs();
+      recordSectionVisit(state.ruleCategory);
+      applyTheme(state.theme);
+      setupTabs();
+      bindForms();
+      renderRules();
+      renderDraft();
+      renderTests();
+      renderStats();
+      renderAchievements();
+      
+      if (state.currentUser.role === 'admin') {
+        renderAdminPanel();
+      } else if (state.currentUser.role === 'teacher') {
+        renderTeacherResults();
+      }
+    }
   }
 
+  function initAuth() {
+    const savedUser = load(storageKeys.auth, null);
+    if (savedUser) {
+      state.currentUser = savedUser;
+      state.isAuthenticated = true;
+      showAppContent();
+    } else {
+      showAuthSection();
+    }
+    
+    setupAuthHandlers();
+  }
+
+  function setupAuthHandlers() {
+    document.querySelectorAll('.auth-tab').forEach(tab => {
+      tab.addEventListener('click', (e) => {
+        const target = e.target.dataset.authTab;
+        document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.auth-form').forEach(f => f.classList.remove('active'));
+        
+        e.target.classList.add('active');
+        document.getElementById(`${target}Form`).classList.add('active');
+      });
+    });
+
+    document.getElementById('registerRole').addEventListener('change', (e) => {
+      const role = e.target.value;
+      document.getElementById('studentFields').style.display = role === 'student' ? 'block' : 'none';
+      document.getElementById('teacherFields').style.display = role === 'teacher' ? 'block' : 'none';
+    });
+
+    document.getElementById('registerForm').addEventListener('submit', handleRegister);
+    document.getElementById('loginForm').addEventListener('submit', handleLogin);
+    document.getElementById('adminLoginBtn').addEventListener('click', showAdminLogin);
+    document.getElementById('confirmAdminLogin').addEventListener('click', handleAdminLogin);
+    document.querySelector('[data-close-modal]').addEventListener('click', () => {
+      document.getElementById('adminLoginModal').classList.add('hidden');
+    });
+    document.getElementById('logoutBtn').addEventListener('click', logout);
+  }
+
+  function handleRegister(e) {
+    e.preventDefault();
+    const role = document.getElementById('registerRole').value;
+    
+    if (role === 'student') {
+      registerStudent();
+    } else if (role === 'teacher') {
+      registerTeacher();
+    } else {
+      toast('Выберите роль');
+    }
+  }
+
+  function registerStudent() {
+    const firstName = document.getElementById('studentFirstName').value.trim();
+    const lastName = document.getElementById('studentLastName').value.trim();
+    const group = document.getElementById('studentGroup').value.trim();
+    
+    if (!firstName || !lastName || !group) {
+      toast('Заполните все поля');
+      return;
+    }
+    
+    const student = {
+      id: uid(),
+      role: 'student',
+      firstName,
+      lastName,
+      group,
+      createdAt: Date.now(),
+      results: []
+    };
+    
+    state.users.push(student);
+    saveUsers();
+    
+    state.currentUser = student;
+    state.isAuthenticated = true;
+    save(storageKeys.auth, student);
+    
+    showAppContent();
+    toast(`Ученик ${firstName} ${lastName} зарегистрирован`);
+  }
+
+  function registerTeacher() {
+    const username = document.getElementById('teacherUsername').value.trim();
+    const password = document.getElementById('teacherPassword').value.trim();
+    
+    if (!username || !password) {
+      toast('Заполните все поля');
+      return;
+    }
+    
+    if (state.users.find(u => u.username === username)) {
+      toast('Имя пользователя уже занято');
+      return;
+    }
+    
+    const teacher = {
+      id: uid(),
+      role: 'teacher',
+      username,
+      password,
+      createdAt: Date.now()
+    };
+    
+    state.users.push(teacher);
+    saveUsers();
+    
+    state.currentUser = teacher;
+    state.isAuthenticated = true;
+    save(storageKeys.auth, teacher);
+    
+    showAppContent();
+    toast(`Учитель ${username} зарегистрирован`);
+  }
+
+  function handleLogin(e) {
+    e.preventDefault();
+    const username = document.getElementById('loginUsername').value.trim();
+    const password = document.getElementById('loginPassword').value.trim();
+    
+    const user = state.users.find(u => u.username === username && u.password === password);
+    
+    if (user) {
+      state.currentUser = user;
+      state.isAuthenticated = true;
+      save(storageKeys.auth, user);
+      showAppContent();
+      toast(`Добро пожаловать, ${user.role === 'teacher' ? user.username : user.firstName}!`);
+    } else {
+      toast('Неверное имя пользователя или пароль');
+    }
+  }
+
+  function handleAdminLogin() {
+    const key = document.getElementById('adminKey').value;
+    
+    if (key === ADMIN_KEY) {
+      const admin = {
+        id: 'admin',
+        role: 'admin',
+        username: 'admin',
+        isAdmin: true
+      };
+      
+      state.currentUser = admin;
+      state.isAuthenticated = true;
+      save(storageKeys.auth, admin);
+      
+      document.getElementById('adminLoginModal').classList.add('hidden');
+      showAppContent();
+      toast('Вход администратора выполнен');
+    } else {
+      toast('Неверный секретный ключ');
+    }
+  }
+
+  function showAdminLogin() {
+    document.getElementById('adminLoginModal').classList.remove('hidden');
+    document.getElementById('adminKey').value = '';
+    document.getElementById('adminKey').focus();
+  }
+
+  function showAuthSection() {
+    document.getElementById('authSection').style.display = 'block';
+    document.querySelector('.app-shell').style.display = 'none';
+    document.getElementById('logoutBtn').style.display = 'none';
+  }
+
+  function showAppContent() {
+    document.getElementById('authSection').style.display = 'none';
+    document.querySelector('.app-shell').style.display = 'block';
+    document.getElementById('logoutBtn').style.display = 'block';
+  }
+
+  function logout() {
+    state.currentUser = null;
+    state.isAuthenticated = false;
+    save(storageKeys.auth, null);
+    showAuthSection();
+    toast('Вы вышли из системы');
+  }
+
+  function saveUsers() {
+    save(storageKeys.users, state.users);
+  }
+
+  function renderAdminPanel() {
+    const teachers = state.users.filter(u => u.role === 'teacher');
+    const students = state.users.filter(u => u.role === 'student');
+    
+    const adminHTML = `
+      <div class="admin-panel">
+        <h2>Панель администратора</h2>
+        
+        <div class="admin-section">
+          <h3>Учителя (${teachers.length})</h3>
+          <div class="user-list">
+            ${teachers.map(teacher => `
+              <div class="user-card">
+                <div class="user-info">
+                  <h4>${teacher.username}</h4>
+                  <p>Зарегистрирован: ${formatDate(teacher.createdAt)}</p>
+                  <p><strong>Пароль:</strong> ${teacher.password}</p>
+                </div>
+                <div class="user-actions">
+                  <button class="secondary-btn" onclick="app.deleteUser('${teacher.id}')">Удалить</button>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+        
+        <div class="admin-section">
+          <h3>Ученики (${students.length})</h3>
+          <div class="user-list">
+            ${students.map(student => `
+              <div class="user-card">
+                <div class="user-info">
+                  <h4>${student.firstName} ${student.lastName}</h4>
+                  <p>Группа: ${student.group}</p>
+                  <p>Тестов пройдено: ${student.results?.length || 0}</p>
+                </div>
+                <div class="user-actions">
+                  <button class="secondary-btn" onclick="app.viewStudentResults('${student.id}')">Результаты</button>
+                  <button class="secondary-btn" onclick="app.deleteUser('${student.id}')">Удалить</button>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      </div>
+    `;
+    
+    const appShell = document.querySelector('.app-shell');
+    const existingAdminPanel = appShell.querySelector('.admin-panel');
+    if (existingAdminPanel) {
+      existingAdminPanel.remove();
+    }
+    appShell.insertAdjacentHTML('afterbegin', adminHTML);
+  }
+
+  function renderTeacherResults() {
+    const students = state.users.filter(u => u.role === 'student');
+    
+    const groups = {};
+    students.forEach(student => {
+      if (!groups[student.group]) {
+        groups[student.group] = [];
+      }
+      groups[student.group].push(student);
+    });
+    
+    const sortedGroups = Object.keys(groups).sort();
+    
+    const resultsHTML = `
+      <div class="teacher-results">
+        <h2>Результаты учеников</h2>
+        ${sortedGroups.map(group => `
+          <div class="student-group">
+            <div class="group-header">Группа ${group}</div>
+            <div class="student-results">
+              ${groups[group].map(student => `
+                <div class="student-result">
+                  <div class="student-name">${student.firstName} ${student.lastName}</div>
+                  <div class="student-stats">
+                    <span>Тестов: ${student.results?.length || 0}</span>
+                    <span>Средний результат: ${calculateAverageScore(student)}%</span>
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    `;
+    
+    const appShell = document.querySelector('.app-shell');
+    const existingResults = appShell.querySelector('.teacher-results');
+    if (existingResults) {
+      existingResults.remove();
+    }
+    appShell.insertAdjacentHTML('afterbegin', resultsHTML);
+  }
+
+  function calculateAverageScore(student) {
+    if (!student.results || student.results.length === 0) return 0;
+    const total = student.results.reduce((sum, result) => sum + result.percent, 0);
+    return Math.round(total / student.results.length);
+  }
+
+  // Делаем функции глобальными для обработки событий в HTML
+  window.app = {
+    deleteUser: function(userId) {
+      if (confirm('Вы уверены, что хотите удалить этого пользователя?')) {
+        state.users = state.users.filter(u => u.id !== userId);
+        saveUsers();
+        renderAdminPanel();
+        toast('Пользователь удален');
+      }
+    },
+    
+    viewStudentResults: function(studentId) {
+      const student = state.users.find(u => u.id === studentId);
+      if (student && student.results) {
+        const resultsText = student.results.map(r => 
+          `${r.testTitle}: ${r.percent}% (${r.score}/${r.total})`
+        ).join('\n');
+        
+        alert(`Результаты ${student.firstName} ${student.lastName}:\n\n${resultsText}`);
+      }
+    }
+  };
+
+  // Остальные существующие функции остаются без изменений
   function load(key, fallback) {
     try {
       const raw = localStorage.getItem(key);
@@ -879,6 +1213,32 @@ document.addEventListener("DOMContentLoaded", () => {
 
     state.stats.unshift(record);
     save(storageKeys.stats, state.stats);
+    
+    if (state.currentUser?.role === 'student') {
+      const studentResult = {
+        testId: session.test.id,
+        testTitle: session.test.title,
+        score: session.correct,
+        total: total,
+        percent: percent,
+        date: Date.now()
+      };
+      
+      if (!state.currentUser.results) {
+        state.currentUser.results = [];
+      }
+      
+      state.currentUser.results.push(studentResult);
+      
+      const userIndex = state.users.findIndex(u => u.id === state.currentUser.id);
+      if (userIndex !== -1) {
+        state.users[userIndex] = state.currentUser;
+        saveUsers();
+      }
+      
+      save(storageKeys.auth, state.currentUser);
+    }
+    
     if (state.stats.length === 1) {
       unlockAchievement("first-test-pass");
     }
@@ -951,7 +1311,7 @@ document.addEventListener("DOMContentLoaded", () => {
   function applyTheme(theme, force = false) {
     const normalized = theme === "dark" ? "dark" : "light";
     if (!force && normalized === state.theme) {
-      // still refresh UI in case of Telegram event
+      return;
     }
     state.theme = normalized;
     document.body.dataset.theme = state.theme;
@@ -1239,4 +1599,3 @@ document.addEventListener("DOMContentLoaded", () => {
       .replaceAll("'", "&#39;");
   }
 });
-
