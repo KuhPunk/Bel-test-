@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Демо - Система регистрации</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 50px;
+        }
+        .header h1 {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+        .header p {
+            font-size: 20px;
+            opacity: 0.9;
+        }
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        .card-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+        .card h2 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 24px;
+        }
+        .card p {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+        .card ul {
+            list-style: none;
+            padding: 0;
+        }
+        .card li {
+            padding: 8px 0;
+            color: #555;
+            border-bottom: 1px solid #eee;
+        }
+        .card li:last-child {
+            border-bottom: none;
+        }
+        .card li::before {
+            content: "✓ ";
+            color: #4caf50;
+            font-weight: bold;
+            margin-right: 8px;
+        }
+        .btn {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: bold;
+            margin-top: 15px;
+            transition: transform 0.2s ease;
+        }
+        .btn:hover {
+            transform: scale(1.05);
+        }
+        .features {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            margin-bottom: 40px;
+        }
+        .features h2 {
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 32px;
+            text-align: center;
+        }
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        .feature-item {
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            text-align: center;
+        }
+        .feature-item .icon {
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+        .feature-item h3 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+        .feature-item p {
+            color: #666;
+            font-size: 14px;
+        }
+        .cta {
+            text-align: center;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        .cta h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 32px;
+        }
+        .cta p {
+            color: #666;
+            font-size: 18px;
+            margin-bottom: 30px;
+        }
+        .btn-large {
+            font-size: 20px;
+            padding: 20px 50px;
+        }
+        .admin-key {
+            background: #fff3cd;
+            border: 2px dashed #ffc107;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        .admin-key code {
+            font-size: 24px;
+            font-weight: bold;
+            color: #856404;
+            font-family: 'Courier New', monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎓 Беларуская Mini App</h1>
+            <p>Система регистрации с тремя ролями пользователей</p>
+        </div>
+
+        <div class="cards">
+            <div class="card">
+                <div class="card-icon">👨‍🎓</div>
+                <h2>Ученик</h2>
+                <p>Простая регистрация без пароля</p>
+                <ul>
+                    <li>Имя и фамилия</li>
+                    <li>Номер группы</li>
+                    <li>Прохождение тестов</li>
+                    <li>Сохранение результатов</li>
+                    <li>Получение достижений</li>
+                </ul>
+                <a href="index.html" class="btn">Зарегистрироваться</a>
+            </div>
+
+            <div class="card">
+                <div class="card-icon">👨‍🏫</div>
+                <h2>Учитель</h2>
+                <p>Регистрация с логином и паролем</p>
+                <ul>
+                    <li>Создание тестов</li>
+                    <li>Создание правил</li>
+                    <li>Просмотр результатов</li>
+                    <li>Группировка по классам</li>
+                    <li>Статистика учеников</li>
+                </ul>
+                <a href="index.html" class="btn">Зарегистрироваться</a>
+            </div>
+
+            <div class="card">
+                <div class="card-icon">👨‍💼</div>
+                <h2>Администратор</h2>
+                <p>Вход через секретный ключ</p>
+                <ul>
+                    <li>Управление пользователями</li>
+                    <li>Просмотр всех данных</li>
+                    <li>Удаление пользователей</li>
+                    <li>Просмотр паролей</li>
+                    <li>Полный контроль</li>
+                </ul>
+                <div class="admin-key">
+                    <code>belarus_admin_2024</code>
+                </div>
+                <a href="index.html" class="btn">Войти как админ</a>
+            </div>
+        </div>
+
+        <div class="features">
+            <h2>✨ Сохранённый функционал</h2>
+            <div class="feature-grid">
+                <div class="feature-item">
+                    <div class="icon">📚</div>
+                    <h3>Правила</h3>
+                    <p>Систематизированные правила беларуской мовы</p>
+                </div>
+                <div class="feature-item">
+                    <div class="icon">✏️</div>
+                    <h3>Создание правил</h3>
+                    <p>Добавляйте свои правила и категории</p>
+                </div>
+                <div class="feature-item">
+                    <div class="icon">🎯</div>
+                    <h3>Конструктор тестов</h3>
+                    <p>Создавайте тесты с вопросами</p>
+                </div>
+                <div class="feature-item">
+                    <div class="icon">📝</div>
+                    <h3>Прохождение тестов</h3>
+                    <p>Проходите тесты и получайте результаты</p>
+                </div>
+                <div class="feature-item">
+                    <div class="icon">📊</div>
+                    <h3>Статистика</h3>
+                    <p>Отслеживайте свой прогресс</p>
+                </div>
+                <div class="feature-item">
+                    <div class="icon">🏆</div>
+                    <h3>Достижения</h3>
+                    <p>Получайте значки за активность</p>
+                </div>
+                <div class="feature-item">
+                    <div class="icon">🌙</div>
+                    <h3>Тёмная тема</h3>
+                    <p>Переключайте между темами</p>
+                </div>
+                <div class="feature-item">
+                    <div class="icon">📱</div>
+                    <h3>Telegram Mini App</h3>
+                    <p>Интеграция с Telegram</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="cta">
+            <h2>🚀 Готовы начать?</h2>
+            <p>Откройте приложение и зарегистрируйтесь в любой роли</p>
+            <a href="index.html" class="btn btn-large">Открыть приложение</a>
+            <p style="margin-top: 30px; font-size: 14px;">
+                <a href="clear-data.html" style="color: #666;">Очистить данные</a> • 
+                <a href="README.md" style="color: #666;">Документация</a> • 
+                <a href="test-guide.md" style="color: #666;">Руководство</a>
+            </p>
+        </div>
+    </div>
+</body>
+</html>
